@@ -8,18 +8,35 @@ I google it and find some library but mainly only 2 was (almost) works:<br>
 <b>U8glib</b> https://code.google.com/p/u8glib/<br>
 <b>T6963_Lib</b> http://code.google.com/p/arduino-t6963c/<br>
 The first one it's really basic and have no DUE or Teensy3 support, second one was pretty interesting but it's quite old and uses hardware mapped pins, plus have some bug.<br>
-Since I have a bounch of those displays (mainly 240x128) I decided to wrote a library with these goals:<br>
+Since I have some of those displays (mainly 240x128) I decided to wrote a library with these goals:<br>
 
  - Uses just 4 wires.
  - Working all my MCU's without changes.
  - Must able to use the features of this chip.
 
-Since I need to uses only 4 wires, I'm enforced to use a GPIO chip. I choosed my preferred one, <b>MCP23s17</b> from Microchip and since I wroted already a library for it (here in my GITHUB,https://github.com/sumotoy/gpio_expander) a part of the job it's done, hurra!<br>
-<b>T6963</b> it's quite strange chip, not particular fast and Toshiba's datasheet it's a disaster so was not easy but fortunatly a guy called Radosław Kwiecień spent a lot of time on it writing his T6963_Lib and I grabbed part of his coding for this one so thanks a lot Radosław!<br>
+Since I need to uses only 4 wires, I'm enforced to use a GPIO chip. I choosed my preferred one, <b>MCP23s17</b> from Microchip and since I wroted already a library for it (here in my GITHUB,https://github.com/sumotoy/gpio_expander) a part of the job it's done, yo!<br>
+<b>T6963</b> it's quite strange chip, not particular fast and Toshiba's datasheet it's a confused messy of informations in bad english, pure Japanese attempt to give as less infos as possible, so was not easy but thanks a guy called Radosław Kwiecień that spent a lot of time writing his T6963_Lib I was able to grab part of his cede for this one so thanks a lot Radosław, nice you shared!<br>
 One good thing of this chip is the ability to uses graphic and text separately in different memory pages an some un-usual command give the ability to switch by adding reverse or blink, it has some other features that give some speed in visualization and only Radosław was able to findout (U8glib it's really raw) but unfortunatly he never finish the library and left some unworking parts of code, so I need to write many part from scratch and replace completely the text routines.<br>
 Another problem is the negative voltage needed from almost all those displays (take a look in the display datasheet first!) that need to be from -9v to -15v, this is not easy when you only have 5V for your MCU!<br>
 I fixed the negative voltage problem with a microchip IC MC34063 that uses a couple of Jaf but you can use any step-up negative supply since the current needed it's really tiny!<br>
 My displays was using High Voltage for backlight so I need to build up another stepUp supply for that! Take a look in LCD datasheet and check<br>
+The Pro and Cons of this chip are so far:<br>
+
+ <b>PRO:</b><br>
+ - Ability to drive large displays thanks byte addressing and internal shadow ram.
+ - Ability to works with mixed Graphics and Text, it's a mix of Char LCD and Graphics one.
+ - Hardware drived paged display with some effects.
+ - Ability to perform animations thanks to fast hardware drived paging (kinda)
+ - Very fast when byte transfer used (only)
+
+ <b>CONS:</b><br>
+ - Not particular fast. Single pixel addressing it's one of the slowest in graphic LCD's market.
+ - It need to read chip state before each command/data transmit.
+ - Commands are clumsy and documentation not help at all.
+ - Initialization it's slow.
+ - Clear graphic screen slow, in contrast clear text screen it's fast.
+
+
 Here's the pin connection with GPIO:<br>
 <table>
 <tr>
