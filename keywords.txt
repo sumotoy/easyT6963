@@ -1,0 +1,60 @@
+#######################################
+# Syntax Coloring Map For easyT6963
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+easyT6963	KEYWORD1
+T6963_SPI	KEYWORD1
+T6963_I2C	KEYWORD1
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+drawPixel	KEYWORD2
+drawRect	KEYWORD2
+drawFillRect	KEYWORD2
+drawFastRect	KEYWORD2
+drawCircle	KEYWORD2
+drawLine	KEYWORD2
+drawBitmap	KEYWORD2
+clearText	KEYWORD2
+clearGraphic	KEYWORD2
+setTextAttrMode	KEYWORD2
+graphicGoTo	KEYWORD2
+setCursor	KEYWORD2
+setCursorPattern	KEYWORD2
+setDispMode	KEYWORD2
+setBacklight	KEYWORD2
+hardwareFontSelect	KEYWORD2
+hardwareScreenReverse	KEYWORD2
+clearDispMode	KEYWORD2
+setMode	KEYWORD2
+getTextCols	KEYWORD2
+getFontWidth	KEYWORD2
+#######################################
+# Constants (LITERAL1)
+#######################################
+T6963_6x8DOTS	LITERAL1
+T6963_8x8DOTS	LITERAL1
+OR	LITERAL1
+XOR	LITERAL1
+AND	LITERAL1
+TEXT	LITERAL1
+INT	LITERAL1
+EXT	LITERAL1
+GRAPHIC_ON	LITERAL1
+GRAPHIC_OFF	LITERAL1
+TEXT_ON	LITERAL1
+TEXT_OFF	LITERAL1
+CURSOR_ON	LITERAL1
+CURSOR_OFF	LITERAL1
+CURSOR_BLINK	LITERAL1
+CURSOR_NORMAL	LITERAL1
+NORMAL	LITERAL1
+REVERSE	LITERAL1
+INHIBIT	LITERAL1
+NBLINK	LITERAL1
+RBLINK	LITERAL1
+IBLINK	LITERAL1
