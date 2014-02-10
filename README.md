@@ -125,7 +125,7 @@ Library it's modular, this mean that low hardware routines have been splitted to
 
 <b>Final Note:</b><br>
 
-This is an experiment, it works (i made a video that proof it http://www.youtube.com/watch?v=LYF7QgHgnZg&feature=youtu.be) but it's not finished, I did quite optimizations to get as fast I can but it can be inproved for sure.<br>
+This is an experiment, it works (i made a video that proof it http://youtu.be/LYF7QgHgnZg) but it's not finished, I did quite optimizations to get as fast I can but it can be inproved for sure.<br>
 
 I got my LCD for around 14 euro, expedition included, I build up a small board (you can see in photo) that contains GPIO chip, High Voltage supply for backlight, a stepUp negative supply for contrast, a level converter for use it with 3V micro and a relay for turn on/off backlight plus some supply filter to clean up the noises introduced by the 2 supplies.
 ![image](http://i1189.photobucket.com/albums/z437/theamra/libraries/CIMG5832.jpg "T6963C_1")<br>
