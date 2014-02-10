@@ -42,7 +42,16 @@ void T6963_SPI::hardwareScreenReverse(bool val){
 	_gpio.gpioPort(gpioData);//send data to GPIO
 }
 
+void T6963_SPI::chipWaitState(){
+	if (_fastMode){
+		delayMicroseconds(1);
+	} else {
+		while(!(checkState() & 0x03));
+	}
+}
+
 void T6963_SPI::hardwareReset(){
+/*
 	uint16_t gpioData = 0xFFFF;//start with this
 	bitClear(gpioData,GPIO__RST);//Hardware font select
 	_gpio.gpioPort(gpioData);//send data to GPIO
@@ -50,30 +59,47 @@ void T6963_SPI::hardwareReset(){
 	bitSet(gpioData,GPIO__RST);//Hardware font select
 	_gpio.gpioPort(gpioData);//send data to GPIO
 	delay(100);
+	*/
 	setTextHome(0);
 	setGraphicHome(0);
 	//Set Graphics Home Address
 	sendData(_graphicHome & 0xFF);
+	delay(1);
 	sendData(_graphicHome >> 8);
+	delay(1);
 	sendCommand(T6963_SET_GRAPHIC_HOME_ADDRESS);
 	//Set Graphics Area
 	sendData(_graphicArea);
+	delay(1);
 	sendData(0x00);
+	delay(1);
 	sendCommand(T6963_SET_GRAPHIC_AREA);
+	delay(1);
 	//Set Text home address
 	sendData(_textHome & 0xFF);
+	delay(1);
 	sendData(_textHome >> 8);
+	delay(1);
 	sendCommand(T6963_SET_TEXT_HOME_ADDRESS);
+	delay(1);
 	//Set Text Area
 	sendData(_graphicArea);
+	delay(1);
 	sendData(0x00);
+	delay(1);
 	sendCommand(T6963_SET_TEXT_AREA);
+	delay(1);
 	//Set Internal CGRAM address
 	sendData(((_memSize/2)-1));
+	delay(1);
 	sendData(0x00);
+	delay(1);
 	sendCommand(T6963_SET_OFFSET_REGISTER);
+	delay(1);
 	setDispMode(TEXT_ON,GRAPHIC_ON,CURSOR_OFF,CURSOR_NORMAL);
+	delay(1);
 	setMode(NORMAL,INT);
+	delay(1);
 	clearText();
 	clearGraphic();
 	delay(10);
@@ -83,6 +109,7 @@ void T6963_SPI::begin(uint8_t width, uint8_t height, uint8_t charsize,uint8_t me
 	_backlight = T6963_BLK_DEFAULT;
 	_hrdwFS = T6963_FS_DEFAULT;
 	_hrdwRV = T6963_SREVERSE_DEFAULT;
+	_fastMode = T6963_FASTMODE_DEFAULT;
 	_width = width;							//240
 	_height = height;						//128
 	_fontWidth = charsize;					//6 or 8
@@ -95,12 +122,14 @@ void T6963_SPI::begin(uint8_t width, uint8_t height, uint8_t charsize,uint8_t me
 	//_maxRow = (_width / 8) - 1;			//29    (6) maybe (_width / _fontWidth) - 1;
 	_maxRow = (_width / _fontWidth) - 1;
 	_gpio.postSetup(_csPin,_adrs);//init external GPIO vars
+	//----------------------------- You can change the SPI INIT here as you like
 	if (_protocolInitOverride){
 		SPI.begin();
 		SPI.setClockDivider(SPI_CLOCK_DIV2); // 4 MHz (half speed)
 		SPI.setBitOrder(MSBFIRST);
 		SPI.setDataMode(SPI_MODE0);
 	}
+	//------------------------------ end
 	_gpio.begin(_protocolInitOverride);//init GPIO
 
 	_gpio.gpioPinMode(OUTPUT);//All GPIO ports as out
@@ -112,7 +141,7 @@ void T6963_SPI::begin(uint8_t width, uint8_t height, uint8_t charsize,uint8_t me
 	Low Level Hardware Routines
 */
 void T6963_SPI::sendCommand(byte command){
-	while(!(checkState() & 0x03));
+	chipWaitState();
 	uint16_t gpioData = (0xFFFF << 8) | command;
 	bitWrite(gpioData,GPIO__FS,_hrdwFS);//Hardware font select
 	bitWrite(gpioData,GPIO__RV,_hrdwRV);//Hardware screen reverse
@@ -125,7 +154,7 @@ void T6963_SPI::sendCommand(byte command){
 }
 
 void T6963_SPI::sendData(byte data){
-	while(!(checkState() & 0x03));
+	chipWaitState();
 	uint16_t gpioData = (0xFFFF << 8) | data;
 	bitWrite(gpioData,GPIO__FS,_hrdwFS);//Hardware font select
 	bitWrite(gpioData,GPIO__RV,_hrdwRV);//Hardware screen reverse
@@ -140,7 +169,8 @@ void T6963_SPI::sendData(byte data){
 uint8_t T6963_SPI::readData(void){
 	uint8_t tmp = 0xFF;
 	uint16_t gpioData = 0xFFFF;//start with this
-	while(!(checkState() & 0x03));
+	//while(!(checkState() & 0x03));
+	chipWaitState();
 	_gpio.gpioPinMode(0b0000000011111111);//port A=in, port B=out
 	bitWrite(gpioData,GPIO__FS,_hrdwFS);//Hardware font select
 	bitWrite(gpioData,GPIO__RV,_hrdwRV);//Hardware screen reverse

@@ -103,6 +103,7 @@ class T6963_SPI : public easyT6963 {
 		virtual uint8_t 	readData(void);
 		virtual uint8_t 	checkState(void);
 	private:
+		void				chipWaitState();
 		void 				hardwareReset();
 		mcp23s17			_gpio;
 		uint8_t				_csPin;

@@ -19,6 +19,8 @@ void easyT6963::clearCG(){
 	for(i = 0; i < 2048; i++){
 		writeDisplayData(0);
 	}
+	_gx = 0;
+	_gy = 0;
 }
 
 /*
@@ -44,6 +46,8 @@ void easyT6963::clearGraphic(uint8_t fastMode){
 			j = j + _maxCol;
 		}
 	}
+	_gx = 0;
+	_gy = 0;
 }
 
 /*
@@ -64,6 +68,11 @@ void easyT6963::clearDispMode(){
 	sendCommand(T6963_DISPLAY_MODE);
 }
 
+
+void easyT6963::fastMode(bool mode){
+	_fastMode = mode;
+}
+
 //-----------------------------------------------------------------------
 //                       Set Display Mode   
 //Example: LCD.setDispMode(true,true,false,false);    //true=ON	false=off 
@@ -72,17 +81,7 @@ void easyT6963::clearDispMode(){
 //								LCD.setCursorPattern(8); // Cursor high
 //								LCD.setCursorPointer(0,0); //Cursor Position	 
 //-----------------------------------------------------------------------
-/*
-byte easyT6963::setDispMode(boolean txt,boolean graphics, boolean curs, boolean blnk){
-	byte tmp = T6963_DISPLAY_MODE;
-	if (graphics) tmp |= 0b1000; //T6963_GRAPHIC_DISPLAY_ON
-	if (txt) tmp |= 0b0100; //T6963_TEXT_DISPLAY_ON
-	if (curs) tmp |= 0b0010; //T6963_CURSOR_DISPLAY_ON
-	if (blnk) tmp |= 0b0001; //T6963_CURSOR_BLINK_ON
-	sendCommand(tmp);
-	return tmp;
-}
-*/
+
 uint8_t easyT6963::setDispMode(bool TEXT_SEL,bool GRAPHIC_SEL,bool CURSOR_SEL,bool CURSOR_BLINKING){
 	uint8_t tmp = T6963_DISPLAY_MODE;
 	if (GRAPHIC_SEL) tmp |= 0b1000; //T6963_GRAPHIC_DISPLAY_ON
@@ -164,13 +163,13 @@ void easyT6963::setGraphicHome(unsigned int addr){
 //-------------------------------------------------------------------------------------------------
 // Set a single pixel at x,y (in pixels) black or white
 //-------------------------------------------------------------------------------------------------
-byte easyT6963::drawPixel(uint8_t x, uint8_t y, bool color){
+void easyT6963::drawPixel(uint8_t x, uint8_t y, bool color){
+	if (x > _width && y > _height) return;
 	byte tmp;
 	color == 1 ? tmp = 0xF8 : tmp = 0xF0;//black or white 0b11111000 || 0b11110000
 	graphicGoTo(x,y);
 	tmp |= (_fontWidth - 1) - (x % _fontWidth); //LSB Direction Correction
 	sendCommand(tmp);
-	return tmp;
 }
 
 /*
@@ -289,7 +288,25 @@ void easyT6963::drawCircle(uint8_t cx, uint8_t cy, uint8_t radius, bool color){
 	}
 }
 
-
+/*
+void easyT6963::drawHalfCircle(uint8_t x, uint8_t y, uint8_t radius,bool color){
+  int xc = 0;
+  int yc ;
+  int p ;
+  yc=radius;
+  p = 3 - (radius << 1);
+  while (xc <= yc)  {
+    drawPixel(x + xc, y - yc, show);
+    drawPixel(x - xc, y - yc, show);
+    drawPixel(x + yc, y - xc, show);
+    drawPixel(x - yc, y - xc, show);
+    if (p < 0)
+      p += (xc++ << 2) + 6;
+    else
+      p += ((xc++ - yc--)<<2) + 10;
+  }
+}
+*/
 
 void easyT6963::plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, bool color){
 	plot4points(cx, cy, x, y, color);
@@ -397,7 +414,11 @@ uint8_t easyT6963::getTextCols(){
 uint8_t easyT6963::getFontWidth(){
 	return _fontWidth;
 }
-
+/*
+void easyT6963::setGraphicFont(const struct FONT_DEF *strcut1) {
+	_currentFont = strcut1;
+}
+*/
 //-------------------------------------------------------------------------------------------------
 // Writes single char pattern to character generator area of display RAM memory
 //-------------------------------------------------------------------------------------------------
@@ -456,62 +477,44 @@ uint8_t easyT6963::setTextAttrMode(uint8_t TEXT_ATTRIBUTE){
 	return tmp;
 }
 
-//-------------------------------------------------------------------------------------------------
-// Print String "Hello World" with Font (byte) faster
-//
-// Example: LCD.TextGoTo(0,0); //Position
-//	           LCD.glcd_print2_P(0,0, "Hello World", &Segoe_Script__14,1);
-//-------------------------------------------------------------------------------------------------
-void easyT6963::glcd_print2_P(uint8_t x,uint8_t y, const char *in, const struct FONT_DEF *strcut1,uint8_t invers){
-	unsigned int offset,swbyte = 0;
-	unsigned char width, by = 0, sbyte = 0, tmp = 0;
-	unsigned char NrBytes;
-	unsigned char i,j,map,height,Fontwidth = 0;
-	while ((map = *in++)) {
-		map = pgm_read_byte(&strcut1->mapping_table[map]);
-		width = strcut1->glyph_width;
-		if (width == 0) width = pgm_read_byte(&strcut1->width_table[map]);
-        NrBytes = ((width-1)/8)+1;
-		offset = pgm_read_word(&strcut1->offset_table[map]);
-		height = strcut1->glyph_height;
-		for (j = 0;j < (height*NrBytes);j+=NrBytes) {     // height
-			swbyte = 0;
-			graphicGoTo(x + Fontwidth,y + (j / NrBytes)); //Graphics Pointer
-			for (i=0; i<NrBytes; i++) { //  width
-				by = pgm_read_byte(&strcut1->glyph_table[offset+j+i]); //Read 8bit
-				if ( _fontWidth == 6){  //fontWidth
-					switch(swbyte){//convert 8bit to 6bit Data for 6bit Font
-						case 0:                //First Byte
-							sbyte = by >> 2;           //First 6 Bit out
-                            tmp = by << 4;             //Store last 2 Bits from first Byte
-                            swbyte++;
-                        break;
-                        case 1:               //First Byte and second Byte
-							sbyte = tmp + (by >> 4);    //Second 6 Bit out
-							tmp = by << 2;            //Store last 4 Bits from second Byte
-							swbyte++;
-						break;
-						case 2:               //Second and third Byte
-							sbyte = tmp + (by >> 6);    //Third 6 Bit out
-							tmp = by;               //Store last 6 Bits from third Byte
-							swbyte++;
-						break;
-						case 3:               //last 6 bits from the third byte
-							sbyte = tmp;            //Fourth 6 Bit out
-							i-=1;                 //i Counter correction while read by
-							swbyte = 0; 
-						break;
-                    }                    //End convert 8bit to 6bit Font
-					writeDisplayData(sbyte); //6bit Font
-                } else {
-                    writeDisplayData(by);  // 8bit Font
-				} 
-			}//End i
-        }// End j
-				Fontwidth += _fontWidth * NrBytes;               
-	}// End K
-}
 
+
+
+
+
+
+void easyT6963::gPrint(uint8_t x,uint8_t y, const char *in, const struct FONT_DEF *strcut1,bool color){
+	unsigned int offset;
+	unsigned char by = 0, mask = 0;
+	uint8_t i,j,height,width,NrBytes;
+	unsigned char cmap;
+	uint8_t allwidth = 0;
+	while ((cmap = *in++)) {
+		cmap = pgm_read_byte(&strcut1->mapping_table[cmap]);
+		width = strcut1->glyph_width;
+		if (width == 0) width = pgm_read_byte(&strcut1->width_table[cmap]);
+		offset = pgm_read_word(&strcut1->offset_table[cmap]);
+		height = strcut1->glyph_height;
+        NrBytes = ((width - 1) / 8) + 1;
+		for (j = 0;j < (height * NrBytes); j+=NrBytes){// height
+			for (i = 0;i < width; i++){//  width
+			    if (i%8 == 0) {
+					by = pgm_read_byte(&strcut1->glyph_table[offset + j + (i/8)]);
+					mask = 0x80;
+			    }
+				_gx = x + (i + allwidth);
+				_gy = y + (j / NrBytes);
+				if (by & mask) {
+					drawPixel(_gx,_gy, !color);
+	 			} else {
+	 				drawPixel(_gx,_gy, color);
+				}
+	 			mask >>= 1;
+			}//End i
+		}// End j
+		allwidth+=width;
+	}// End K
+} 
 
 // --------------------------- SPECIAL write belongs to stream.h, need special attention -----------------------------------
 
@@ -520,7 +523,56 @@ size_t easyT6963::write(uint8_t value) {
 	return 1; //assume success  added for Arduino 1
 }
 
+/*
+uint8_t easyT6963::strlenght(const char *string) {
+  const char *s;
+  s = string;
+  while (*s)
+    s++;
+  return s - string-1;
+}
 
+void  easyT6963::gPrint2(uint8_t x,uint8_t y, const char *in,  const struct FONT_DEF *strcut1,bool color){
+	uint8_t i;
+	uint8_t width = 0;
+	_gx = x;
+	_gy = y;
+	for(i=0;i<=strlenght(in);i++){
+		width += gWrite(width,y,in[i],strcut1,color);
+      width--;
+  }
+}
+
+uint8_t easyT6963::gWrite(uint8_t x,uint8_t y,char in, const struct FONT_DEF *strcut1,bool color) {
+	unsigned int offset;
+	unsigned char by = 0, mask = 0;
+	uint8_t i,j,height,width,NrBytes;
+	uint8_t allwidth = 0;
+	uint8_t cmap = in;
+	cmap = pgm_read_byte(&strcut1->mapping_table[cmap]);
+	width = strcut1->glyph_width;
+	if (width == 0) width = pgm_read_byte(&strcut1->width_table[cmap]);
+	offset = pgm_read_word(&strcut1->offset_table[cmap]);
+	height = strcut1->glyph_height;
+      NrBytes = ((width - 1) / 8) + 1;
+	for (j = 0;j < (height * NrBytes); j+=NrBytes){ // height
+		for (i = 0;i < width; i++){//  width
+			if (i%8 == 0) {
+				by = pgm_read_byte(&strcut1->glyph_table[offset + j + (i/8)]);
+				mask = 0x80;
+			}
+			if (by & mask) {
+				drawPixel(x + (i + allwidth), y + (j / NrBytes), !color);
+	 		} else {
+	 			drawPixel(x + (i + allwidth), y + (j / NrBytes), color);
+			}	
+	 		mask >>= 1;
+		}//End i
+	}// End j
+	allwidth+=width;
+	return allwidth;
+}
+*/
 /*
 void easyT6963::printByte(word data,uint8_t len){
 	Serial.println();
@@ -536,3 +588,5 @@ void easyT6963::printByte(word data,uint8_t len){
   Serial.print(data,HEX);
 }
 */
+
+

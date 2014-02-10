@@ -1,16 +1,20 @@
+/*
+Original test sketch by Radosław Kwiecień
+	http://code.google.com/p/arduino-t6963c/
+Modified for this library.
+This sketch has been modified for a 240x128 LCD display!
+*/
+
 #include <SPI.h>
 #include <mcp23s17.h>   // needed!
 #include <T6963_SPI.h>
-#include "fonts/Times_New_Roman__14.h"
+#include "fonts/Dubsteptrix__12.h"
 
 #if (defined(__AVR_ATmega1280__) || defined(__AVR_ATmega1281__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__))      //--- Arduino Mega ---
 T6963_SPI lcd(53,0x20,1);//53,0x20
 #else	
 T6963_SPI lcd(10,0x20,1);//10,0x20
 #endif
-
-
-
 
 
 //Arduino Image1
@@ -156,7 +160,6 @@ static unsigned char PROGMEM Arduino1bmp[]= { //AVR-GCC, WinAVR
 };
 
 
-
 void pixelDemo(){
   for(byte _b = 0;_b<240;_b++){
     lcd.drawPixel(_b,_b >> 1,1);
@@ -202,6 +205,7 @@ void drawCircleDemo(){
   delay(1000);
 }
 
+//TEXT attributes unique of T6963!
 void textModeDemo(){
   const char* textmessage[4] = { 
     "           * Normal Display *           ", 
@@ -212,7 +216,6 @@ void textModeDemo(){
     NORMAL,REVERSE,NBLINK,RBLINK  };
   lcd.clearGraphic();
   lcd.clearText();
-  // Text Attribute Mode by T6963C
   //Set Text attributes in Text Mode,Graphic Off
   lcd.setMode(TEXT,INT);//NORMAL,XOR,AND,TEXT Attribute Mode,INT=Intern CGram,EXT=Extern CGram
 
@@ -222,7 +225,8 @@ void textModeDemo(){
     lcd.print("TEXT DEMO Textattribute Set by T6963C");
     lcd.setCursor(0,2);
     lcd.print(textmessage[i]);
-    lcd.setTextAttrMode(textmode[i]); // NORMAL=Normal display REVERSE=Reverse display INHIBIT=Inhibit display NBLINK=Blink of normal display RBLINK=Blink of reverse display IBLINK=Blink of inhibit display (TEXT ONLY)
+    // NORMAL=Normal display REVERSE=Reverse display INHIBIT=Inhibit display NBLINK=Blink of normal display RBLINK=Blink of reverse display IBLINK=Blink of inhibit display (TEXT ONLY)
+    lcd.setTextAttrMode(textmode[i]); 
 
     for (int x = 0; x <= 126; x++)
     {
@@ -234,23 +238,11 @@ void textModeDemo(){
     }
     lcd.clearText();
   }
-  lcd.setMode(NORMAL);//0=Normal X=Xor A=And T=Text Attribute Mode  ,  I=Intern CGram ,E=Extern CGram
+  lcd.setMode(NORMAL);//NORMAL,XOR,AND,TEXT,INT,EXT
   lcd.clearGraphic();
 }
 
-void animationDemo(){
-  // Animated Image
-  /*
-  lcd.setMode(XOR); //Mode Set for Reverse Text
-   for(int i = 0;i<10;i++)
-   {
-   lcd.drawFastRect(0,0,8,40,0b111111);                  // drawrectbyte(x, y, height, bytewidth,pattern) // x,y = Start Position, Height in Pixel, Widht in Byte (6x8Font =6 Pixel 8x8Font = 8 Pixel, Fill pattern in byte Example:0b10101010  
-   lcd.setCursor(1,0);
-   lcd.print("LCD GRAPHIC DISPLAY 240x64 with T6963C");
-   lcd.drawAnim( 62, 50, animdemo, 24, pictureHEIGHT, pictureBYTEWIDTH);
-   }  
-   */
-}
+
 
 void bitMapDemo(){
   lcd.clearGraphic();
@@ -268,16 +260,15 @@ void externalFontDemo(){
   lcd.clearGraphic();
   lcd.clearText();
   //Font Demo
-  lcd.glcd_print2_P(3, 0, "Font Times New Roman14", &Times_New_Roman__14, 0);
-  lcd.glcd_print2_P(60, 40, "Hello World", &Times_New_Roman__14, 1);
-  lcd.glcd_print2_P(60, 60, "Hello World", &Times_New_Roman__14, 0);
-  lcd.glcd_print2_P(60, 80, "Hello World", &Times_New_Roman__14, 1);
-  lcd.glcd_print2_P(60, 100, "Hello World", &Times_New_Roman__14, 0);
+  lcd.gPrint(3, 0, "Graphic Font", &Dubsteptrix__12, 0);
+  lcd.gPrint(60, 40, "Hello World", &Dubsteptrix__12, 1);
+  lcd.gPrint(60, 60, "Hello World", &Dubsteptrix__12, 0);
+  lcd.gPrint(60, 80, "Hello World", &Dubsteptrix__12, 1);
+  lcd.gPrint(60, 100, "Hello World", &Dubsteptrix__12, 0);
 }
 
 void filledBoxDemo(){
   // Filled Box Speed Demo  
-
   lcd.setCursor(0,0);
   lcd.print("       Speed Demo with filled Box       ");
   lcd.setCursor(1,14);   
@@ -299,10 +290,9 @@ void bigDemo(){
   drawCircleDemo();
   textModeDemo();
   filledBoxDemo();
-  bitMapDemo();
-  //animationDemo();
-  //externalFontDemo();
-  delay(4000);
+  //bitMapDemo();
+  externalFontDemo();
+  delay(1000);
   lcd.clearGraphic();
 }
 
@@ -311,7 +301,7 @@ void setup() {
   //Serial.begin(115200);
   lcd.begin(240,128,T6963_6x8DOTS,32);//240,128,T6963_6x8DOTS,32
   lcd.setBacklight(1);
-
+  lcd.fastMode(true);
 }
 
 void loop() {

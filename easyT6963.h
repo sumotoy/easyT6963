@@ -89,6 +89,10 @@ a StepUp negative circuit since you are probably driving everithing at +5V!
 //pgmspace fixup
 #if defined(__arm__) && defined(CORE_TEENSY) && (defined(__MK20DX128__) || defined(__MK20DX256__))//teensy 3 or 3.1
 #include <avr/pgmspace.h>//Teensy3 and AVR arduinos can use pgmspace.h
+#ifdef PROGMEM
+#undef PROGMEM
+#define PROGMEM __attribute__((section(".progmem.data")))
+#endif
 #elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//uno, max, DUE	
 	#ifndef __PGMSPACE_H_
 	#define __PGMSPACE_H_ 1
@@ -101,6 +105,7 @@ a StepUp negative circuit since you are probably driving everithing at +5V!
 	#endif
 #else
 #include <avr/pgmspace.h>//Teensy3 and AVR arduinos can use pgmspace.h
+
 #endif
 
 #include "utility/_chipConstants.h"//load controller constants
@@ -168,10 +173,11 @@ public:
 	uint8_t 		setDispMode(bool TEXT_SEL,bool GRAPHIC_SEL,bool CURSOR_SEL,bool CURSOR_BLINKING);
 	void 			clearDispMode();
 	uint8_t 		setMode(uint8_t MODE_SEL, uint8_t CGRAM_SEL=0);
+	void			fastMode(bool mode);//0:slow/1:fast
 	//------------------- Draw Functions ---------------------------
 	void 			clearGraphic(uint8_t fastMode=1);
 	void 			clearCG();
-	byte 			drawPixel(uint8_t x,uint8_t y,bool color=1);
+	void 			drawPixel(uint8_t x,uint8_t y,bool color=1);
 	void 			drawLine(uint8_t x0,uint8_t y0,uint8_t x1,uint8_t y1,bool color=1);
 	void 			drawFastVLine(uint8_t x, uint8_t y,uint8_t h, bool color=1);
 	void 			drawFastHLine(uint8_t x, uint8_t y,uint8_t w, bool color=1);
@@ -196,41 +202,49 @@ public:
 	void 			graphicGoTo(uint8_t x, uint8_t y);
 	byte 			setCursorPattern(uint8_t b);
 	void 			setCursorPointer(uint8_t col,uint8_t row);//VERIFICA!
-	void			glcd_print2_P(uint8_t x,uint8_t y, const char *in, const struct FONT_DEF *strcut1,uint8_t invers);
+	//uint8_t 		gWrite(uint8_t x,uint8_t y,char in, const struct FONT_DEF *strcut1,bool color);
+	void  			gPrint(uint8_t x,uint8_t y, const char *in,  const struct FONT_DEF *strcut1,bool color);
+	
 
-	//void 			printByte(word data,uint8_t len=8);
 protected:
 	void 			setTextHome(unsigned int addr);
 	void			setGraphicHome(unsigned int addr);
 	void 			plot8points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, bool color);
 	void 			plot4points(uint8_t cx, uint8_t cy, uint8_t x, uint8_t y, bool color);
 	/* --------------------------------------- shared protected vars -------------------------------*/
-	uint8_t			_width;
-	uint8_t			_height;
-	uint8_t			_fontWidth;
-	int				_memSize;
-	unsigned int	_graphicArea;
-	unsigned int	_graphicSize;
-	unsigned int	_textSize;
-	unsigned int	_textHome;
-	unsigned int	_graphicHome;
-	unsigned int	_maxCol;
-	unsigned int	_maxRow;
+	uint8_t					_width;
+	uint8_t					_height;
+	uint8_t					_fontWidth;
+	int						_memSize;
+	unsigned int			_graphicArea;
+	unsigned int			_graphicSize;
+	unsigned int			_textSize;
+	unsigned int			_textHome;
+	unsigned int			_graphicHome;
+	unsigned int			_maxCol;
+	unsigned int			_maxRow;
 	
-	uint8_t			_hrdwFS;
-	uint8_t			_hrdwRV;
-	uint8_t		    _backlight;
+	uint8_t					_hrdwFS;
+	uint8_t					_hrdwRV;
+	uint8_t		    		_backlight;
+	uint8_t					_fastMode;
+	
+	volatile uint8_t		_gx;
+	volatile uint8_t		_gy;
 	
 private:
 	void 			setAddressPointer(unsigned int address);
 	void 			writeDisplayData(byte x);
 	void 			writeDataNon(byte x);
 	void 			writeDisplayDataDec(byte x);
+	//uint8_t 		strlenght(const char *string);
 	unsigned int 	calculateAddress(uint8_t x, uint8_t y);
 	virtual void 	sendCommand(byte command) = 0;
 	virtual void 	sendData(byte data) = 0;
 	virtual byte 	readData(void) = 0;
 	virtual byte 	checkState(void) = 0;
+
+
 };
 
 

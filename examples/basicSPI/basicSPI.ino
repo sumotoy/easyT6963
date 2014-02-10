@@ -10,9 +10,10 @@ T6963_SPI lcd(10,0x20,1);//53,0x20
 
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
+  //240x128 display
   lcd.begin(240,128,T6963_6x8DOTS,32);//240,128,T6963_6x8DOTS,32
-
+  lcd.fastMode(true);//try also false
   lcd.setBacklight(1);
   lcd.drawCircle(30,30,30,1);
   lcd.drawFillRect (70,70,100,100,1);
@@ -28,4 +29,3 @@ void loop() {
   lcd.drawPixel(w,h,0);
   delay(100);
 }
-

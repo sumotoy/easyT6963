@@ -31,5 +31,5 @@
 #define	T6963_BLK_DEFAULT					0//backlight				1:on, 0:off
 #define	T6963_FS_DEFAULT					1//hardware font select		1:6x8,0:8x8
 #define	T6963_SREVERSE_DEFAULT					1//hardware screen inverse  1:REV,0:NORM
-
+#define	T6963_FASTMODE_DEFAULT					0//disable wait status  1:disabled (fast),0:normal (safer but slow)
 #endif

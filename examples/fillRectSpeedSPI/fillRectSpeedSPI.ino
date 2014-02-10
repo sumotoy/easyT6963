@@ -22,14 +22,27 @@ void loop() {
   timeFPS();
 }
 
+boolean _mode = true;
 
 void timeFPS()
 {
+  if (_mode){
+     _mode = false;
+    lcd.fastMode(_mode);
+  } else {
+     _mode = true;
+    lcd.fastMode(_mode);
+  }
   unsigned long stime, etime;
   unsigned long sp;
   lcd.clearText();
   lcd.setCursor(0,0);
-  lcd.print("       Speed Demo with filled Box       ");
+  lcd.print("       Speed Demo ");
+  if (_mode){
+      lcd.print("FastMode enabled");
+  } else {
+      lcd.print("Normal Mode");
+  }
   lcd.drawRect(4,10,112,87,1);//x,y=Start Position,Height,Width,Color
   stime = micros();
   //(x, y, height, bytewidth, pattern) // x,y=Start Position,Height,Width in Byte (6x8Font=6Bits 8x8Font=8Bits),Fill pattern in byte Example:0b10101010 
@@ -52,4 +65,3 @@ void timeFPS()
   lcd.drawFastRect(126,12,83,18,0b00000000);//Clear Box Pixel
   lcd.clearGraphic();
 }
-

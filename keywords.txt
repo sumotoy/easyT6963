@@ -18,12 +18,15 @@ drawFillRect	KEYWORD2
 drawFastRect	KEYWORD2
 drawCircle	KEYWORD2
 drawLine	KEYWORD2
+drawAnim	KEYWORD2
+fastMode	KEYWORD2
 drawBitmap	KEYWORD2
 clearText	KEYWORD2
 clearGraphic	KEYWORD2
 setTextAttrMode	KEYWORD2
 graphicGoTo	KEYWORD2
 setCursor	KEYWORD2
+gPrint	KEYWORD2
 setCursorPattern	KEYWORD2
 setDispMode	KEYWORD2
 setBacklight	KEYWORD2
