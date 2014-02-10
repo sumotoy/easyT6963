@@ -5,6 +5,9 @@ Library for T6963 displays with a GPIO (only 4 wires)<br>
 ![image](http://i1189.photobucket.com/albums/z437/theamra/libraries/CIMG5833.jpg "T6963C_1")<br>
 
 Now Beta and fully working, lot of speedup, mixed (text&Graphic) environment working. Check the examples...<br>
+
+http://www.youtube.com/watch?v=JvwkEgbJaDo
+
 <b>ToDo:</b> 
  - Graphic Font rendering can be faster. Next release will not render blank pixels but a routine will fast erase the string placeholder and render routine will fill just needed pixels, this will fast a lot rendering.
  - Some graphic low level routine can be a bit faster.
