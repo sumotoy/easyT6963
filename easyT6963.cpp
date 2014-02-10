@@ -480,15 +480,13 @@ uint8_t easyT6963::setTextAttrMode(uint8_t TEXT_ATTRIBUTE){
 
 
 
-
-
-
 void easyT6963::gPrint(uint8_t x,uint8_t y, const char *in, const struct FONT_DEF *strcut1,bool color){
 	unsigned int offset;
 	unsigned char by = 0, mask = 0;
 	uint8_t i,j,height,width,NrBytes;
 	unsigned char cmap;
 	uint8_t allwidth = 0;
+	//byte tmp;
 	while ((cmap = *in++)) {
 		cmap = pgm_read_byte(&strcut1->mapping_table[cmap]);
 		width = strcut1->glyph_width;
@@ -507,7 +505,11 @@ void easyT6963::gPrint(uint8_t x,uint8_t y, const char *in, const struct FONT_DE
 				if (by & mask) {
 					drawPixel(_gx,_gy, !color);
 	 			} else {
-	 				drawPixel(_gx,_gy, color);
+	 				if (color) {
+						drawPixel(_gx,_gy, color);
+					} else {
+						graphicGoTo(_gx,_gy);
+					}
 				}
 	 			mask >>= 1;
 			}//End i
@@ -522,71 +524,5 @@ size_t easyT6963::write(uint8_t value) {
 	writeDisplayData(value - 32);
 	return 1; //assume success  added for Arduino 1
 }
-
-/*
-uint8_t easyT6963::strlenght(const char *string) {
-  const char *s;
-  s = string;
-  while (*s)
-    s++;
-  return s - string-1;
-}
-
-void  easyT6963::gPrint2(uint8_t x,uint8_t y, const char *in,  const struct FONT_DEF *strcut1,bool color){
-	uint8_t i;
-	uint8_t width = 0;
-	_gx = x;
-	_gy = y;
-	for(i=0;i<=strlenght(in);i++){
-		width += gWrite(width,y,in[i],strcut1,color);
-      width--;
-  }
-}
-
-uint8_t easyT6963::gWrite(uint8_t x,uint8_t y,char in, const struct FONT_DEF *strcut1,bool color) {
-	unsigned int offset;
-	unsigned char by = 0, mask = 0;
-	uint8_t i,j,height,width,NrBytes;
-	uint8_t allwidth = 0;
-	uint8_t cmap = in;
-	cmap = pgm_read_byte(&strcut1->mapping_table[cmap]);
-	width = strcut1->glyph_width;
-	if (width == 0) width = pgm_read_byte(&strcut1->width_table[cmap]);
-	offset = pgm_read_word(&strcut1->offset_table[cmap]);
-	height = strcut1->glyph_height;
-      NrBytes = ((width - 1) / 8) + 1;
-	for (j = 0;j < (height * NrBytes); j+=NrBytes){ // height
-		for (i = 0;i < width; i++){//  width
-			if (i%8 == 0) {
-				by = pgm_read_byte(&strcut1->glyph_table[offset + j + (i/8)]);
-				mask = 0x80;
-			}
-			if (by & mask) {
-				drawPixel(x + (i + allwidth), y + (j / NrBytes), !color);
-	 		} else {
-	 			drawPixel(x + (i + allwidth), y + (j / NrBytes), color);
-			}	
-	 		mask >>= 1;
-		}//End i
-	}// End j
-	allwidth+=width;
-	return allwidth;
-}
-*/
-/*
-void easyT6963::printByte(word data,uint8_t len){
-	Serial.println();
-  for (int i=len-1;i>=0; i--){
-    if (bitRead(data,i)==1){
-      Serial.print("1");
-    } 
-    else {
-      Serial.print("0");
-    }
-  }
-  Serial.print(" -> 0x");
-  Serial.print(data,HEX);
-}
-*/
 
 
