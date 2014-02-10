@@ -6,13 +6,11 @@ Library for T6963 displays with a GPIO (only 4 wires)<br>
 
 Now Beta and fully working, lot of speedup, mixed (text&Graphic) environment working. Check the examples...<br>
 
-http://www.youtube.com/watch?v=JvwkEgbJaDo
-
-<b>ToDo:</b> 
+<b>ToDo:</b><br>
  - Graphic Font rendering can be faster. Next release will not render blank pixels but a routine will fast erase the string placeholder and render routine will fill just needed pixels, this will fast a lot rendering.
  - Some graphic low level routine can be a bit faster.
 
-
+<b>Introduction:</b><br>
 <b>T6963</b> it's a graphic controller from Toshiba mounted usually on few large graphic displays. Unfortunatly it needs a lot of wires, from 14 to 16, and it's not well supported for MCU like Arduino, Teensy, DUE, etc.<br>
 I google it and find some library but mainly only 2 was (almost) works:<br>
 <b>U8glib</b> https://code.google.com/p/u8glib/<br>
@@ -47,7 +45,7 @@ The Pro and Cons of this chip are so far:<br>
  - Clear graphic screen slow, in contrast clear text screen it's fast.
 
 
-Here's the pin connection with GPIO:<br>
+<b>Here's the pin connection with GPIO:</b><br>
 <table>
 <tr>
 <td><b>LCD Pin</b></td><td><b>MCP23S17 PIN</b></td>
@@ -106,28 +104,28 @@ Here's the pin connection with GPIO:<br>
  - <b>Note 2</b>: RV pin is not present in all LCD's. If not, ignore it.
  - <b>Note 3</b>: Backlight pin should be <b>used carefully</b> since large displays use a lot of current and MCP23s17 cannot handle more that a couple of leds. I will include a simple schematic for an universal background driver that use a reed relay, this allow you to use almost every LCD background (even mine that uses High Voltage), for the experiment ignore this pin and connect your Background as your datasheet suggest without use the GPIO pin, you can use it later.<br>
 
-Note About Reset pin:<br>
+<b>Note About Reset pin:</b><br>
 
 For some reason the reset pin it's not working as expected! Every display I used in the past (that have a reset pin) poerform an hardware reset of the controller but this one it's really curious... It seems to slowly clear internal ram after a reset, as result the timings I have to respect after a reset are not so clear so It happens that it starts up with screnn mi-unlined and so on (maybe once every 10-15 times). I discovered that it's better tie the pin at 5V or trough a 10K resistor to Vdd but can be an issue of my LCD, the library can control the reset directly so if you want to experiment there's an hardware reset routine commented out in library, just comment out and find your way but I suggest to leave always on, if works...
 
 
-The other pins of MCP23s17:<br>
+<b>The other pins of MCP23s17:</b><br>
 
 The remaining MCP23s17 pins are of course <b>GND</b>, <b>VDD</b>, the <b>MOSI,MISO,SCK</b> and <b>CS</b> pins and 3 address pin (<b>A0,A1,A2</b>) and a <b>RESET</b> pin (should be connected to VDD). Only 2 pins labeled INT-a and INT-b should be leaved unconnected since they are not needed. Just remember to put some decoupling capacitor for MCP23s17 and LCD!<br>
 The address pins are really important since you can use the HAEN feature of this chip that let you share 8 of these GPIOs by sharing the same SPI lines, included CS! So, if you like to add some other GPIO to control some relay and maybe some switch and led you can use some other MCP23s17 with different A0,A1,A2 address on same wires, in this way you will lose only 1 pin of your micro since you can still share main SPI with other stuff!<br>
 For a quick test, tie all address to GND, that means address <b>0x20</b><br>
 
-A note about memory impact on your MCU:<br>
+<b>A note about memory impact on your MCU:</b><br>
 
 I would raccomand attention using large displays on small memory MCU like UNO, I tried to use the internal ram as much I could but if you plan to use external fonts or bitmaps you can reach the limits of those small cpu's!<br>
 
-Expanding Library:<br>
+<b>Expanding Library:</b><br>
 
 Library it's modular, this mean that low hardware routines have been splitted to simply use any GPIO you like or even direct connections, just add a separate file with your own method or propose here that I will include it.<br>
 
-Final Note:<br>
+<b>Final Note:</b><br>
 
-This is an experiment, it works (i made a video that proof it) but it's not finished, I did quite optimizations to get as fast I can but it can be inproved for sure.<br>
+This is an experiment, it works (i made a video that proof it http://www.youtube.com/watch?v=JvwkEgbJaDo) but it's not finished, I did quite optimizations to get as fast I can but it can be inproved for sure.<br>
 
 I got my LCD for around 14 euro, expedition included, I build up a small board (you can see in photo) that contains GPIO chip, High Voltage supply for backlight, a stepUp negative supply for contrast, a level converter for use it with 3V micro and a relay for turn on/off backlight plus some supply filter to clean up the noises introduced by the 2 supplies.
 ![image](http://i1189.photobucket.com/albums/z437/theamra/libraries/CIMG5832.jpg "T6963C_1")<br>
