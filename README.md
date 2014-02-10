@@ -1,7 +1,13 @@
 easyT6963
 =========
 
-Library for T6963 displays with a GPIO (only 4 wires)
+Library for T6963 displays with a GPIO (only 4 wires)<br>
+
+Now Beta and fully working, lot of speedup, mixed (text&Graphic) environment working. Check the examples...<br>
+<b>ToDo:</b> 
+ - Graphic Font rendering can be faster. Next release will not render blank pixels but a routine will fast erase the string placeholder and render routine will fill just needed pixels, this will fast a lot rendering.
+ - Some graphic low level routine can be a bit faster.
+
 
 <b>T6963</b> it's a graphic controller from Toshiba mounted usually on few large graphic displays. Unfortunatly it needs a lot of wires, from 14 to 16, and it's not well supported for MCU like Arduino, Teensy, DUE, etc.<br>
 I google it and find some library but mainly only 2 was (almost) works:<br>
