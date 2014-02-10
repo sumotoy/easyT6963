@@ -109,6 +109,21 @@ class T6963_SPI : public easyT6963 {
 		uint8_t				_csPin;
 		uint8_t				_adrs;
 		uint8_t				_protocolInitOverride;
+		//some time tweaking for MCU processors and speed
+#if defined(__arm__) && defined(CORE_TEENSY) && (defined(__MK20DX128__) || defined(__MK20DX256__))
+		#if (F_CPU == 96000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(3); }
+		#elif (F_CPU == 48000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
+		#elif (F_CPU == 24000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
+		#endif
+#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//chipkit uno, chipkit max, arduino DUE	
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
+		// I don't have those so...
+#else
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
+#endif
 };
 
 

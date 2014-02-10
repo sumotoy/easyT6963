@@ -44,7 +44,7 @@ void T6963_SPI::hardwareScreenReverse(bool val){
 
 void T6963_SPI::chipWaitState(){
 	if (_fastMode){
-		delayMicroseconds(1);
+		T6963_WAIT_DELAY();
 	} else {
 		while(!(checkState() & 0x03));
 	}

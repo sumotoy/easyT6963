@@ -89,11 +89,20 @@ a StepUp negative circuit since you are probably driving everithing at +5V!
 //pgmspace fixup
 #if defined(__arm__) && defined(CORE_TEENSY) && (defined(__MK20DX128__) || defined(__MK20DX256__))//teensy 3 or 3.1
 #include <avr/pgmspace.h>//Teensy3 and AVR arduinos can use pgmspace.h
+	#if def _mk20dx128_h_
+		#if (F_CPU == 96000000)
+		
+		#elif (F_CPU == 48000000)
+
+		#elif (F_CPU == 24000000)
+
+		#endif
+	#endif
 #ifdef PROGMEM
 #undef PROGMEM
 #define PROGMEM __attribute__((section(".progmem.data")))
 #endif
-#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//uno, max, DUE	
+#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//chipkit uno, chipkit max, arduino DUE	
 	#ifndef __PGMSPACE_H_
 	#define __PGMSPACE_H_ 1
 	#define PROGMEM
@@ -245,6 +254,7 @@ private:
 	virtual byte 	checkState(void) = 0;
 
 
+    
 };
 
 
