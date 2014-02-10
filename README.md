@@ -2,6 +2,7 @@ easyT6963
 =========
 
 Library for T6963 displays with a GPIO (only 4 wires)<br>
+![image](http://i1189.photobucket.com/albums/z437/theamra/libraries/CIMG5833.jpg "T6963C_1")<br>
 
 Now Beta and fully working, lot of speedup, mixed (text&Graphic) environment working. Check the examples...<br>
 <b>ToDo:</b> 
@@ -108,4 +109,4 @@ For a quick test, tie all address to GND that means address 0x20!<br>
 I would raccomand attention using large displays on small memory MCU like UNO, I tried to use the internal CGRAM as much I can but if you plan to use external fonts or bitmaps you can reach the limits of those small cpu's!<br>
 Library it's modular, this mean that low hardware routines have been splitted to simply use any GPIO you like or even direct connections!<br>
 This is an experiment, it works (i made a video that proof it) but it's far to be finished, I did quite optimizations to get as fast I can but if you plan to use a I2C GPIO, simply forget it!<br>
-
+![image](http://i1189.photobucket.com/albums/z437/theamra/libraries/CIMG5832.jpg "T6963C_1")<br>
