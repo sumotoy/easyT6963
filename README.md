@@ -117,11 +117,18 @@ For a quick test, tie all address to GND, that means address <b>0x20</b><br>
 
 <b>A note about memory impact on your MCU:</b><br>
 
-I would raccomand attention using large displays on small memory MCU like UNO, I tried to use the internal ram as much I could but if you plan to use external fonts or bitmaps you can reach the limits of those small cpu's!<br>
+Take care using large displays on small memory MCU like UNO, I tried to use the internal ram as much I could but if you plan to use external fonts or bitmaps you can reach the limits of those small cpu's!<br>
 
 <b>Expanding Library:</b><br>
 
 Library it's modular, this mean that low hardware routines have been splitted to simply use any GPIO you like or even direct connections, just add a separate file with your own method or propose here that I will include it.<br>
+
+<b>Processor compatibility:</b><br>
+
+Since it uses a GPIO chip in SPI it's potentially compatible with most MCU's! To work with DUE and TEENSY3.x I used a <b>74HCT541</b>, at <b>96Mhz</b> and </b>SPI_CLOCK_DIV2</b> the performance it's amazing (http://youtu.be/Am8p5E8Cb_4 bad quality video but ok to see the speedup).<br>
+I've tested with UNO,Mega2560,Teensy3,Teensy3.1 and worked perfectly.<br>
+Some of the examples give an error on Teensy3, just disable the bitmaps array and bitmap test, it's not an error of the library but tests originating from old code from Radosław and have no time to fixup, I'm using his examples as reference to see the improvements.<br>
+
 
 <b>Final Note:</b><br>
 
