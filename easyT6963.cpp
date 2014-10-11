@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
-#include <Arduino.h>
+#if defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific
+#include "Energia.h"
+#else
+#include "Arduino.h"
+#endif
 #include "easyT6963.h"
 
 easyT6963::easyT6963(){
@@ -165,6 +169,7 @@ void easyT6963::setGraphicHome(unsigned int addr){
 //-------------------------------------------------------------------------------------------------
 void easyT6963::drawPixel(uint8_t x, uint8_t y, bool color){
 	if (x > _width && y > _height) return;
+	if (color > 1) color = 1;
 	byte tmp;
 	color == 1 ? tmp = 0xF8 : tmp = 0xF0;//black or white 0b11111000 || 0b11110000
 	graphicGoTo(x,y);

@@ -10,6 +10,7 @@
 ---------------------------------------------------------------------------------------------------------------------
 Version history:
 0.1b3:First working version, tested with Mega2560
+0.1b5:Compatible with Energia IDE? (Stellaris, etc.)
 ---------------------------------------------------------------------------------------------------------------------
 		Copyright (c) 2014, s.u.m.o.t.o.y [sumotoy(at)gmail.com]
 ---------------------------------------------------------------------------------------------------------------------
@@ -117,8 +118,18 @@ class T6963_SPI : public easyT6963 {
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
 		#elif (F_CPU == 24000000)
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
+		#else
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
 		#endif
-#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//chipkit uno, chipkit max, arduino DUE	
+#elif defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific	
+		#if (F_CPU >= 80000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(3); }
+		#elif ((F_CPU >= 40000000) && (F_CPU <= 80000000))
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
+		#else
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
+		#endif
+#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//chipkit uno, chipkit max, arduino DUE
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
 		// I don't have those so...
 #else

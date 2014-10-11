@@ -10,6 +10,7 @@
 ---------------------------------------------------------------------------------------------------------------------
 Version history:
 0.1b3:First working version, tested with Mega2560
+0.1b4:Compatibility with Teensy3 and Energia IDE (Stellaris, etc.)
 ---------------------------------------------------------------------------------------------------------------------
 		Copyright (c) 2014, s.u.m.o.t.o.y [sumotoy(at)gmail.com]
 ---------------------------------------------------------------------------------------------------------------------
@@ -80,7 +81,11 @@ a StepUp negative circuit since you are probably driving everithing at +5V!
 #ifndef EASY_T6963_H
 #define EASY_T6963_H
 
-#include <Arduino.h>
+#if defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific
+#include "Energia.h"
+#else
+#include "Arduino.h"
+#endif
 #include <inttypes.h>
 #include <Print.h>
 #include "utility/_font.h"

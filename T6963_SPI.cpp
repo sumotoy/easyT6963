@@ -1,6 +1,10 @@
 
 #include <inttypes.h>
-#include <Arduino.h>
+#if defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific
+#include "Energia.h"
+#else
+#include "Arduino.h"
+#endif
 #include "T6963_SPI.h"
 #include <../SPI/SPI.h>//this chip needs SPI
 #include <../gpio_expander/mcp23s17.h>
@@ -141,6 +145,7 @@ void T6963_SPI::begin(uint8_t width, uint8_t height, uint8_t charsize,uint8_t me
 	Low Level Hardware Routines
 */
 void T6963_SPI::sendCommand(byte command){
+
 	chipWaitState();
 	uint16_t gpioData = (0xFFFF << 8) | command;
 	bitWrite(gpioData,GPIO__FS,_hrdwFS);//Hardware font select
