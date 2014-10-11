@@ -5,10 +5,12 @@ Library for T6963 displays with a GPIO (only 4 wires)<br>
 ![image](http://i1189.photobucket.com/albums/z437/theamra/libraries/CIMG5833.jpg "T6963C_1")<br>
 
 Now Beta and fully working, lot of speedup, mixed (text&Graphic) environment working. Check the examples...<br>
+The new beta should be compatible with Energia IDE so many processors can be used (Stellaris, etc.)<br>
 
 <b>ToDo:</b><br>
  - Graphic Font rendering can be faster. Next release will not render blank pixels but a routine will fast erase the string placeholder and render routine will fill just needed pixels, this will fast a lot rendering.
  - Some graphic low level routine can be a bit faster.
+ - Can use SPI Transactions in the very next beta!
 
 <b>Introduction:</b><br>
 <b>T6963</b> it's a graphic controller from Toshiba mounted usually on few large graphic displays. Unfortunatly it needs a lot of wires, from 14 to 16, and it's not well supported for MCU like Arduino, Teensy, DUE, etc.<br>
