@@ -6,6 +6,7 @@ Library for T6963 displays with a GPIO (only 4 wires)<br>
 
 Now Beta and fully working, lot of speedup, mixed (text&Graphic) environment working. Check the examples...<br>
 The new beta should be compatible with Energia IDE so many processors can be used (Stellaris, etc.)<br>
+**Warning**: Energia support just as it's basic stage and not tested. It compiles but doesn't mean that will works! So please wait I test it (and prolly fix) before use it with Energia MCU's!<br>
 
 <b>ToDo:</b><br>
  - Graphic Font rendering can be faster. Next release will not render blank pixels but a routine will fast erase the string placeholder and render routine will fill just needed pixels, this will fast a lot rendering.
