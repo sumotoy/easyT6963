@@ -10,7 +10,6 @@
 ---------------------------------------------------------------------------------------------------------------------
 Version history:
 0.1b3:First working version, tested with Mega2560
-0.1b4:Compatibility with Teensy3 and Energia IDE (Stellaris, etc.)
 ---------------------------------------------------------------------------------------------------------------------
 		Copyright (c) 2014, s.u.m.o.t.o.y [sumotoy(at)gmail.com]
 ---------------------------------------------------------------------------------------------------------------------
@@ -92,17 +91,8 @@ a StepUp negative circuit since you are probably driving everithing at +5V!
 
 
 //pgmspace fixup
-#if defined(__arm__) && defined(CORE_TEENSY) && (defined(__MK20DX128__) || defined(__MK20DX256__))//teensy 3 or 3.1
+#if defined(__MK20DX128__) || defined(__MK20DX256__)  || defined(__MKL26Z64__)//teensy 3 or 3.1 or LC
 #include <avr/pgmspace.h>//Teensy3 and AVR arduinos can use pgmspace.h
-	#if def _mk20dx128_h_
-		#if (F_CPU == 96000000)
-		
-		#elif (F_CPU == 48000000)
-
-		#elif (F_CPU == 24000000)
-
-		#endif
-	#endif
 #ifdef PROGMEM
 #undef PROGMEM
 #define PROGMEM __attribute__((section(".progmem.data")))

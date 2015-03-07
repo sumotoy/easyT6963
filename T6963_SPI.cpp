@@ -1,4 +1,3 @@
-
 #include <inttypes.h>
 #if defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific
 #include "Energia.h"

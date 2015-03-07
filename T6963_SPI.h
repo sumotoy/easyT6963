@@ -10,7 +10,6 @@
 ---------------------------------------------------------------------------------------------------------------------
 Version history:
 0.1b3:First working version, tested with Mega2560
-0.1b5:Compatible with Energia IDE? (Stellaris, etc.)
 ---------------------------------------------------------------------------------------------------------------------
 		Copyright (c) 2014, s.u.m.o.t.o.y [sumotoy(at)gmail.com]
 ---------------------------------------------------------------------------------------------------------------------
@@ -111,16 +110,22 @@ class T6963_SPI : public easyT6963 {
 		uint8_t				_adrs;
 		uint8_t				_protocolInitOverride;
 		//some time tweaking for MCU processors and speed
-#if defined(__arm__) && defined(CORE_TEENSY) && (defined(__MK20DX128__) || defined(__MK20DX256__))
-		#if (F_CPU == 96000000)
+#if defined(__MK20DX128__) || defined(__MK20DX256__)  || defined(__MKL26Z64__)
+		#if (F_CPU == 168000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(6); }
+		#elif (F_CPU == 144000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(5); }
+		#elif (F_CPU == 120000000)
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(4); }
+		#elif (F_CPU == 96000000)
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(3); }
 		#elif (F_CPU == 48000000)
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
 		#elif (F_CPU == 24000000)
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
-		#else
-		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
 		#endif
+#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//chipkit uno, chipkit max, arduino DUE	
+		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
 #elif defined(ENERGIA) // LaunchPad, FraunchPad and StellarPad specific	
 		#if (F_CPU >= 80000000)
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(3); }
@@ -128,10 +133,8 @@ class T6963_SPI : public easyT6963 {
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
 		#else
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
-		#endif
-#elif defined(__32MX320F128H__) || defined(__32MX795F512L__) || (defined(ARDUINO) && defined(__arm__) && !defined(CORE_TEENSY))//chipkit uno, chipkit max, arduino DUE
-		inline void		T6963_WAIT_DELAY() { delayMicroseconds(2); }
 		// I don't have those so...
+		#endif
 #else
 		inline void		T6963_WAIT_DELAY() { delayMicroseconds(1); }
 #endif
